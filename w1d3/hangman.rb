@@ -5,7 +5,7 @@ class Hangman
     @checker = checker
     @wrong_guesses = 0
   end
-
+  
   def play
     if @checker.is_a? HumanPlayer
       puts "How long is your word?"
@@ -144,9 +144,6 @@ class ComputerPlayer
     end
     max_letter
   end
-
-
-
 end
 
 
@@ -154,6 +151,3 @@ player_one = ComputerPlayer.new
 player_two = HumanPlayer.new
 game = Hangman.new(player_one, player_two)
 game.play
-
-
-letters.sort_by{ |k, v| v }.values
