@@ -2,11 +2,22 @@ require_relative 'pieces'
 
 class Board
 
-  def self.deep_dup
+  def self.deep_dup(object)
+    result = []
+    if !object.is_a? Array
+      result = object
+    else
+      object.each do |el|
+        result << Board.deep_dup(el)
+      end
+    end
+
+    result
   end
 
+
   def initialize
-    @grid = Array.new(8) { Array.new(8) {false}}
+    @grid = Array.new(8) { Array.new(8) {false} }
   end
 
   def [](pos)
@@ -26,6 +37,10 @@ class Board
 
   def occupied?(pos)
     self[pos] != false
+  end
+
+  def empty_square?(pos)
+    on_board?(pos) && !occupied?(pos)
   end
 
   def piece_at(pos)
@@ -150,25 +165,11 @@ class Board
       print "\n"
     end
     puts
-    #colorize gem
-    #unicode for chess pieces
-  end
-
-
-  #debugging method
-  def delete_at(pos)
-    self[pos] = false
   end
 
 end
 
 if __FILE__ == $PROGRAM_NAME
-  # board = Board.new
-  # board.render
-  # pos = [0, 0]
-  # p board.occupied?(pos)
-  # p board[pos]
-  # board[pos] = 1
-  # p board[pos]
-  # p board.occupied?(pos)
+  test_array = [ [], [7] ]
+  new_array = Board.deep_dup(test_array)
 end
