@@ -23,37 +23,9 @@ class Board
     @grid = Array.new(8) { Array.new(8) {false} }
   end
 
-  def [](pos)
-    #y axis has positive heading down
-    row, column = pos
-    @grid[row][column]
-  end
-
-  def []=(pos, piece)
-    row, column = pos
-    @grid[row][column] = piece
-  end
-
-  def on_board?(pos)
-    pos.all? { |x| x.between?(0, 7)}
-  end
-
-  def occupied?(pos)
-    self[pos] != false
-  end
-
-  def empty_square?(pos)
-    on_board?(pos) && !occupied?(pos)
-  end
-
-  def piece_at(pos)
-    self[pos]
-  end
-
   def move(start_pos, end_pos)
     piece = self[start_pos]
-    valid_moves = piece.possible_moves
-    valid_moves = valid_moves.reject { |move| piece.move_into_check?(move) }
+    valid_moves = piece.possible_moves.reject { |move| piece.move_into_check?(move) }
     if valid_moves.include?(end_pos)
       move!(start_pos, end_pos)
     else
@@ -84,8 +56,8 @@ class Board
 
   def get_pieces(color)
     pieces = []
-    (0..7).each do |i|
-      (0..7).each do |j|
+    0.upto(7) do |i|
+      0.upto(7) do |j|
         pos = [i, j]
         pieces << self[pos] if occupied?(pos) && self[pos].color == color
       end
@@ -94,21 +66,13 @@ class Board
     pieces
   end
 
-  def in_check?(color, verbose = false)
-    enemy_color = color == :white ? :black : :white
-
-    enemy_pieces = get_pieces(enemy_color)
-
-    total_possible_moves = []
-    enemy_pieces.each do |enemy_piece|
-      total_possible_moves += enemy_piece.possible_moves
+  def in_check?(color)
+    enemy = (color == :red ? :blue : :red)
+    end_positions = []
+    get_pieces(enemy).each do |enemy_piece|
+      end_positions += enemy_piece.possible_moves
     end
-
-    total_possible_moves.each do |move|
-      if self[move].class == King
-        return true
-      end
-    end
+    end_positions.each { |end_pos| return true if self[end_pos].class == King }
 
     false
   end
@@ -121,15 +85,11 @@ class Board
     @grid.each.with_index do |row, i|
       print i
       row.each.with_index do |el, j|
-        if (i+j).odd?
-          colorize_options[:background] = :black
-        else
-          colorize_options[:background] = :white
-        end
+        colorize_options[:background] = (i+j).odd? ? :black : :white
         if el == false
           print "  ".colorize(colorize_options)
         else
-          if el.color == :white
+          if el.color == :red
             colorize_options[:color] = :red
           else
             colorize_options[:color] = :blue
@@ -142,13 +102,33 @@ class Board
     puts
   end
 
+  def [](pos)
+    #y axis has positive heading down
+    row, column = pos
+    @grid[row][column]
+  end
+
+  def []=(pos, piece)
+    row, column = pos
+    @grid[row][column] = piece
+  end
+
+  def on_board?(pos)
+    pos.all? { |x| x.between?(0, 7)}
+  end
+
+  def occupied?(pos)
+    self[pos] != false
+  end
+
+  def empty_square?(pos)
+    on_board?(pos) && !occupied?(pos)
+  end
+
+  def piece_at(pos)
+    self[pos]
+  end
 end
 
 if __FILE__ == $PROGRAM_NAME
-  test_array = [ [], [7] ]
-  board = Board.new
-  new_array = Board.deep_dup(board)
-  p new_array
-  puts
-  p board
 end

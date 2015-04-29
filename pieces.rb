@@ -5,21 +5,20 @@ class Piece
   attr_reader :symbol, :pos, :color
   attr_accessor :moved, :pos, :board
 
-  def initialize (color, pos, board, moved = false)
-    @color, @pos, @board, @moved = color, pos, board, moved
+  def initialize (pos, board, player, moved = false)
+    @pos, @board, @moved, @player =  pos, board, moved, player
+    @color = @player.color
   end
-
 
   def move_into_check?(new_pos)
     new_board = Board.deep_dup(board)
     new_board.move!(pos, new_pos)
-    new_board.in_check?(color, true)
+    new_board.in_check?(color)
   end
 
   def dup(new_board)
-    self.class.new(color, pos, new_board)
+    self.class.new(pos, new_board, @player)
   end
-
 end
 
 class SlidingPiece < Piece
@@ -56,7 +55,7 @@ end
 class SteppingPiece < Piece
   attr_reader :color
 
-  def initialize(color, pos, board, moved = false)
+  def initialize(pos, board, player, moved = false)
     super
     create_directions
   end
@@ -64,7 +63,7 @@ class SteppingPiece < Piece
   def possible_moves
     possible_moves = []
     @possible_directions.each do |offset|
-      possible_moves += stepping_moves_helper(pos, offset, @color )
+      possible_moves += stepping_moves_helper(pos, offset, color)
     end
 
     possible_moves
@@ -87,7 +86,7 @@ end
 
 #Sliding pieces
 class Rook < SlidingPiece
-  def initialize(color, pos, board, moved = false)
+    def initialize(pos, board, player, moved = false)
     super
     @symbol = "\u265C"
   end
@@ -98,7 +97,7 @@ class Rook < SlidingPiece
 end
 
 class Bishop < SlidingPiece
-  def initialize(color, pos, board, moved = false)
+  def initialize(pos, board, player, moved = false)
     super
     @symbol = "\u265D"
   end
@@ -109,7 +108,7 @@ class Bishop < SlidingPiece
 end
 
 class Queen < SlidingPiece
-  def initialize(color, pos, board, moved = false)
+  def initialize(pos, board, player, moved = false)
     super
     @symbol = "\u265B"
   end
@@ -120,10 +119,11 @@ class Queen < SlidingPiece
   end
 end
 
+
 #Stepping pieces
 class King < SteppingPiece
 
-  def initialize(color, pos, board, moved = false)
+  def initialize(pos, board, player, moved = false)
     super
     @symbol = "\u265A"
   end
@@ -140,17 +140,13 @@ end
 class Pawn < SteppingPiece
   attr_reader :direction, :color
 
-  def initialize(color, pos, board, moved = false)
+  def initialize(pos, board, player, moved = false)
     super
     @symbol = "\u265F"
   end
 
   def create_directions
-    if color == :black
-      @direction = 1
-    else
-      @direction = -1
-    end
+    @direction = (@player.number == 2 ? 1 : -1)
   end
 
   def possible_moves
@@ -177,21 +173,14 @@ class Pawn < SteppingPiece
       end
     end
 
-
     results
   end
-
 end
 
 class Knight < SteppingPiece
-  # MOVE_DIRS = []
-  def initialize(color, pos, board, moved = false)
+  def initialize(pos, board, player, moved = false)
     super
     @symbol = "\u265E"
-  end
-
-  def move_dirs
-    MOVE_DIRS
   end
 
   def create_directions
@@ -200,9 +189,4 @@ class Knight < SteppingPiece
       [-1, 2], [-1, -2], [-2, 1], [-2, -1]
     ]
   end
-end
-
-
-if __FILE__ == $PROGRAM_NAME
-
 end

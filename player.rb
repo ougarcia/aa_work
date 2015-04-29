@@ -1,8 +1,9 @@
 class Player
-  attr_reader :color
+  attr_reader :color, :number
 
-  def initialize(color)
+  def initialize(color, number)
     @color = color
+    @number = number
   end
 
   def prompt

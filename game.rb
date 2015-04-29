@@ -3,7 +3,6 @@ require_relative 'board.rb'
 require_relative 'player.rb'
 require 'colorize'
 
-
 class InvalidMoveError < StandardError
 end
 
@@ -12,27 +11,28 @@ class Game
 
   def initialize
     @board = Board.new
-    @player1, @player2 = Player.new(:white), Player.new(:black)
-    create_pieces(:black)
-    create_pieces(:white)
+    @player1, @player2 = Player.new(:red, 1), Player.new(:blue, 2)
+    create_pieces(@player1)
+    create_pieces(@player2)
   end
 
-  def create_pieces(color)
-    if color == :black
+  def create_pieces(player)
+    if player.number == 2
       back_row, pawn_row = 0, 1
     else
       back_row, pawn_row = 7, 6
     end
+    color = player.color
 
     HIGHER_PIECES.each_with_index do |piece_class, i|
       position = [back_row, i]
-      @board[position] = piece_class.new(color, position, @board)
+      @board[position] = piece_class.new(position, @board, player)
     end
 
     #create pawns
     0.upto(7) do |column|
       pos = [pawn_row, column]
-      @board[pos] = Pawn.new(color, pos, @board)
+      @board[pos] = Pawn.new(pos, @board, player)
     end
   end
 
@@ -41,23 +41,14 @@ class Game
   end
 
   def play
-    loop do
-      puts "Red's Turn"
-      take_turn(@player1)
-      if @board.checkmate?(@player2)
-        puts "#{@player2.color.capitalize} is checkmated!"
-        break
-      end
-      puts "Blue's Turn"
-      take_turn(@player2)
-      if @board.checkmate?(@player1)
-        puts "#{@player1.color.capitalize} is checkmated!"
-        break
-      end
+    current_player, other_player = @player1, @player2
+    until @board.checkmate?(current_player)
+      puts "#{current_player.color.capitalize}'s Turn"
+      take_turn(current_player)
+      current_player, other_player = other_player, current_player
     end
+    puts "#{current_player.color.capitalize} is checkmated!"
   end
-
-
 
   def take_turn(player)
     begin
@@ -72,11 +63,11 @@ class Game
       retry
     end
 
-    if @board.in_check?(:white)
-      puts "White's in Check!!!!"
+    if @board.in_check?(@player1.color)
+      puts "#{@player1.color.capitalize}'s in Check!!!!"
     end
-    if @board.in_check?(:black)
-      puts "Black's in Check!!!!"
+    if @board.in_check?(@player2.color)
+      puts "#{@player2.color.capitalize}'s in Check!!!!"
     end
   end
 end
