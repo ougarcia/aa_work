@@ -55,17 +55,13 @@ class Board
     valid_moves = piece.possible_moves
     valid_moves = valid_moves.reject { |move| piece.move_into_check?(move) }
     if valid_moves.include?(end_pos)
-      self[end_pos] = self[start_pos]
-      self[end_pos].moved = true
-      self[start_pos] = false
-      self[end_pos].pos = end_pos
+      move!(start_pos, end_pos)
     else
       raise InvalidMoveError
     end
   end
 
   def move!(start_pos, end_pos)
-    piece = self[start_pos]
     self[end_pos] = self[start_pos]
     self[end_pos].moved = true
     self[start_pos] = false
