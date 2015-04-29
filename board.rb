@@ -1,20 +1,23 @@
+require 'byebug'
 require_relative 'pieces'
 
 class Board
 
-  def self.deep_dup(object)
-    result = []
-    if !object.is_a? Array
-      result = object
-    else
-      object.each do |el|
-        result << Board.deep_dup(el)
+  def self.deep_dup(old_board)
+    new_board = Board.new
+    (0..7).each do |i|
+      (0..7).each do |j|
+        pos = [i, j]
+        if old_board[pos] == false
+          new_board[pos] = false
+        else
+          new_board[pos] = old_board[pos].dup(new_board)
+        end
       end
     end
 
-    result
+    new_board
   end
-
 
   def initialize
     @grid = Array.new(8) { Array.new(8) {false} }
@@ -96,38 +99,62 @@ class Board
   end
 
   def move(start_pos, end_pos)
-    valid_moves = self[start_pos].possible_moves
+    piece = self[start_pos]
+    valid_moves = piece.possible_moves
+    valid_moves = valid_moves.reject { |move| piece.move_into_check?(move) }
     if valid_moves.include?(end_pos)
       self[end_pos] = self[start_pos]
       self[end_pos].moved = true
       self[start_pos] = false
       self[end_pos].pos = end_pos
     else
-      raise
+      raise InvalidMoveError
     end
   end
 
-  def checkmate?
+  def move!(start_pos, end_pos)
+    piece = self[start_pos]
+    self[end_pos] = self[start_pos]
+    self[end_pos].moved = true
+    self[start_pos] = false
+    self[end_pos].pos = end_pos
   end
 
-  def in_check?(color)
-    enemy_pieces = []
+  def checkmate?(player)
+    moves = []
+    if in_check?(player.color)
+      my_pieces = get_pieces(player.color)
+      my_pieces.each do |my_piece|
+        moves += my_piece.possible_moves.reject { |move| my_piece.move_into_check?(move) }
+      end
+      moves.empty?
+    else
+      false
+    end
+  end
+
+
+  def get_pieces(color)
+    pieces = []
     (0..7).each do |i|
       (0..7).each do |j|
-        pos = [i,j]
-        if occupied?(pos) && self[pos].color != color
-          enemy_pieces << self[pos]
-        end
+        pos = [i, j]
+        pieces << self[pos] if occupied?(pos) && self[pos].color == color
       end
     end
 
+    pieces
+  end
+
+  def in_check?(color, verbose = false)
+    enemy_color = color == :white ? :black : :white
+
+    enemy_pieces = get_pieces(enemy_color)
 
     total_possible_moves = []
     enemy_pieces.each do |enemy_piece|
-      next if enemy_piece == nil
       total_possible_moves += enemy_piece.possible_moves
     end
-
 
     total_possible_moves.each do |move|
       if self[move].class == King
@@ -171,5 +198,9 @@ end
 
 if __FILE__ == $PROGRAM_NAME
   test_array = [ [], [7] ]
-  new_array = Board.deep_dup(test_array)
+  board = Board.new
+  new_array = Board.deep_dup(board)
+  p new_array
+  puts
+  p board
 end

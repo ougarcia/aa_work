@@ -3,6 +3,10 @@ require_relative 'board.rb'
 require_relative 'player.rb'
 require 'colorize'
 
+
+class InvalidMoveError < StandardError
+end
+
 class Game
   # [Rook, Knight, Bishop, Queen, King, Bishop, Knight, Rook]
   STARTING_POSITIONS_BLACK = {
@@ -73,28 +77,41 @@ class Game
     loop do
       puts "Red's Turn"
       take_turn(@player1)
+      if @board.checkmate?(@player2)
+        puts "#{@player2.color.capitalize} is checkmated!"
+        break
+      end
       puts "Blue's Turn"
       take_turn(@player2)
+      if @board.checkmate?(@player1)
+        puts "#{@player1.color.capitalize} is checkmated!"
+        break
+      end
     end
   end
 
-  def take_turn(player)
-    if @board.in_check?(player.color)
-      p player.color
-      puts "#{player.color.capitalize}'s in Check!!!!"
-    end
 
+
+  def take_turn(player)
     begin
       @board.render
       move = player.prompt
       raise unless @board[move[0]].color == player.color
       @board.move(*move)
-      rescue
-        puts "Invalid Move!!!"
-        retry
+    rescue InvalidMoveError
+      puts "Invalid Move!!!"
+      retry
     end
 
+    if @board.in_check?(:white)
+      puts "White's in Check!!!!"
+    end
+    if @board.in_check?(:black)
+      puts "Black's in Check!!!!"
+    end
   end
+
+
 
 end
 
@@ -102,6 +119,14 @@ end
 
 if __FILE__ == $PROGRAM_NAME
   game = Game.new
+  board = game.show_board
+  # board.move([1, 5], [2, 5])
+  # board.move([6, 4], [4, 4])
+  # board.move([1, 6], [3, 6])
+
+  # board.move([7, 3], [3, 7] )
+  # board.move([1, 5], [2, 5])
+  # board.render
   game.play
   # board = game.show_board
   # board.render

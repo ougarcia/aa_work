@@ -3,13 +3,22 @@ require_relative 'player.rb'
 
 class Piece
   attr_reader :symbol, :pos, :color
-  attr_accessor :moved, :pos
+  attr_accessor :moved, :pos, :board
+
   def initialize (color, pos, board, moved = false)
     @color, @pos, @board, @moved = color, pos, board, moved
   end
 
 
+  def move_into_check?(new_pos)
+    new_board = Board.deep_dup(board)
+    new_board.move!(pos, new_pos)
+    new_board.in_check?(color, true)
+  end
 
+  def dup(new_board)
+    self.class.new(color, pos, new_board)
+  end
 
 end
 
@@ -24,11 +33,13 @@ class SlidingPiece < Piece
       offsets = [ [1, 0], [-1, 0], [0, 1], [0, -1] ]
     end
     offsets.each do |offset|
-      possible_moves += @board.sliding_moves_helper(pos, offset, @color)
+      possible_moves += @board.sliding_moves_helper(pos, offset, color)
     end
 
     possible_moves
   end
+
+
 end
 
 class SteppingPiece < Piece
@@ -47,6 +58,7 @@ class SteppingPiece < Piece
 
     possible_moves
   end
+
 end
 
 
@@ -126,7 +138,7 @@ class Pawn < SteppingPiece
 end
 
 class Knight < SteppingPiece
-  MOVE_DIRS = []
+  # MOVE_DIRS = []
   def initialize(color, pos, board, moved = false)
     super
     @symbol = "\u265E"
@@ -146,6 +158,5 @@ end
 
 
 if __FILE__ == $PROGRAM_NAME
-  k = Knight.new(:white, nil, nil)
-  p k.symbol
+
 end
