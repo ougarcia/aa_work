@@ -33,13 +33,24 @@ class SlidingPiece < Piece
       offsets = [ [1, 0], [-1, 0], [0, 1], [0, -1] ]
     end
     offsets.each do |offset|
-      possible_moves += @board.sliding_moves_helper(pos, offset, color)
+      possible_moves += sliding_moves_helper(pos, offset, color)
     end
 
     possible_moves
   end
 
-
+  def sliding_moves_helper(pos, offset, color)
+    new_pos = [pos[0]+offset[0], pos[1]+offset[1]]
+    if !@board.on_board?(new_pos)
+      return []
+    elsif !@board.occupied?(new_pos)
+      return [new_pos] + sliding_moves_helper(new_pos, offset, color)
+    elsif @board[new_pos].color != color
+      return [new_pos]
+    else
+      return []
+    end
+  end
 end
 
 class SteppingPiece < Piece
@@ -53,12 +64,24 @@ class SteppingPiece < Piece
   def possible_moves
     possible_moves = []
     @possible_directions.each do |offset|
-      possible_moves += @board.stepping_moves_helper(pos, offset, @color )
+      possible_moves += stepping_moves_helper(pos, offset, @color )
     end
 
     possible_moves
   end
 
+  def stepping_moves_helper(pos, offset, color)
+    new_pos = [pos[0]+offset[0], pos[1]+offset[1]]
+    if !@board.on_board?(new_pos)
+      return []
+    elsif !@board.occupied?(new_pos)
+      return [new_pos]
+    elsif @board[new_pos].color != color
+      return [new_pos]
+    else
+      return []
+    end
+  end
 end
 
 
@@ -131,9 +154,32 @@ class Pawn < SteppingPiece
   end
 
   def possible_moves
-    @board.pawn_moves_helper(pos, direction, color, moved)
+    pawn_moves_helper(pos, direction, color, moved)
   end
 
+  def pawn_moves_helper(pos, direction, color, moved)
+    results = []
+    new_pos = [pos[0] + direction, pos[1]]
+    results << new_pos if @board.on_board?(new_pos) && !@board.occupied?(new_pos)
+
+    if !moved && results.include?(new_pos)
+      next_pos = new_pos.dup
+      next_pos[0] += direction
+      if @board.on_board?(next_pos) && !@board.occupied?(next_pos)
+        results << next_pos
+      end
+    end
+
+    diags = [[new_pos[0], pos[1] + 1], [new_pos[0], pos[1] - 1]]
+    diags.each do |position|
+      if @board.on_board?(position) && @board.occupied?(position) && @board[position].color != color
+        results << position
+      end
+    end
+
+
+    results
+  end
 
 end
 

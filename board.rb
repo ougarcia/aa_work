@@ -50,54 +50,6 @@ class Board
     self[pos]
   end
 
-  def sliding_moves_helper(pos, offset, color)
-    new_pos = [pos[0]+offset[0], pos[1]+offset[1]]
-    if !on_board?(new_pos)
-      return []
-    elsif !occupied?(new_pos)
-      return [new_pos] + sliding_moves_helper(new_pos, offset, color)
-    elsif self[new_pos].color != color
-      return [new_pos]
-    else
-      return []
-    end
-  end
-
-  def stepping_moves_helper(pos, offset, color)
-    new_pos = [pos[0]+offset[0], pos[1]+offset[1]]
-    if !on_board?(new_pos)
-      return []
-    elsif !occupied?(new_pos)
-      return [new_pos]
-    elsif self[new_pos].color != color
-      return [new_pos]
-    else
-      return []
-    end
-  end
-
-  def pawn_moves_helper(pos, direction, color, moved)
-    results = []
-    new_pos = [pos[0] + direction, pos[1]]
-    results << new_pos if on_board?(new_pos) && !occupied?(new_pos)
-
-    if !moved && results.include?(new_pos)
-      next_pos = new_pos.dup
-      next_pos[0] += direction
-      results << next_pos if on_board?(next_pos) && !occupied?(next_pos)
-    end
-
-    diags = [[new_pos[0], pos[1] + 1], [new_pos[0], pos[1] - 1]]
-    diags.each do |position|
-      if on_board?(position) && occupied?(position) && self[position].color != color
-        results << position
-      end
-    end
-
-
-    results
-  end
-
   def move(start_pos, end_pos)
     piece = self[start_pos]
     valid_moves = piece.possible_moves
