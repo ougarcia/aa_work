@@ -1,6 +1,3 @@
-require_relative 'board'
-require_relative 'player.rb'
-
 class Piece
   attr_reader :symbol, :pos, :color
   attr_accessor :moved, :pos, :board
@@ -17,7 +14,7 @@ class Piece
   end
 
   def dup(new_board)
-    self.class.new(pos, new_board, @player)
+    self.class.new(pos.dup, new_board, @player)
   end
 end
 
@@ -39,7 +36,7 @@ class SlidingPiece < Piece
   end
 
   def sliding_moves_helper(pos, offset, color)
-    new_pos = [pos[0]+offset[0], pos[1]+offset[1]]
+    new_pos = [pos[0] + offset[0], pos[1] + offset[1]]
     if !@board.on_board?(new_pos)
       return []
     elsif !@board.occupied?(new_pos)

@@ -1,6 +1,5 @@
-require_relative 'pieces.rb'
 require_relative 'board.rb'
-require_relative 'player.rb'
+require_relative 'human_player.rb'
 require 'colorize'
 
 class InvalidMoveError < StandardError

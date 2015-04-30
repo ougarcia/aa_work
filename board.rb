@@ -1,8 +1,6 @@
-require 'byebug'
 require_relative 'pieces'
 
 class Board
-
   def self.deep_dup(old_board)
     new_board = Board.new
     (0..7).each do |i|
@@ -55,15 +53,7 @@ class Board
 
 
   def get_pieces(color)
-    pieces = []
-    0.upto(7) do |i|
-      0.upto(7) do |j|
-        pos = [i, j]
-        pieces << self[pos] if occupied?(pos) && self[pos].color == color
-      end
-    end
-
-    pieces
+    @grid.flatten.select{|piece| piece != false && piece.color == color}
   end
 
   def in_check?(color)
