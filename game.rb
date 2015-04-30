@@ -34,7 +34,6 @@ class Game
     end
   end
 
-
   def play
     current_player = @player1
     until @board.checkmate?(current_player)
@@ -42,6 +41,7 @@ class Game
       take_turn(current_player)
       current_player = other_player(current_player)
     end
+
     puts "#{current_player.color.capitalize} is checkmated!"
   end
 
@@ -57,22 +57,14 @@ class Game
       puts "Invalid Move!!!"
       retry
     end
-
-    if @board.in_check?(@player1.color)
-      puts "#{@player1.color.capitalize}'s in Check!!!!"
-    end
-    if @board.in_check?(@player2.color)
-      puts "#{@player2.color.capitalize}'s in Check!!!!"
+    other_color = other_player(player).color
+    if @board.in_check?(other_color)
+      puts "#{other_color.capitalize}'s in Check!"
     end
   end
 
   def other_player(player)
     player == @player1 ? @player2 : @player1
-  end
-
-
-  def show_board
-    @board
   end
 end
 
@@ -81,10 +73,5 @@ end
 if __FILE__ == $PROGRAM_NAME
   game = Game.new
   board = game.show_board
-  # board.move([1, 5], [2, 5])
-  # board.move([6, 4], [4, 4])
-  # board.move([1, 6], [3, 6])
-  # board.move([7, 3], [3, 7] )
-  # board.move([1, 5], [2, 5])
   game.play
 end
