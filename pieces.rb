@@ -2,8 +2,9 @@ class Piece
   attr_reader :symbol, :pos, :color
   attr_accessor :moved, :pos, :board
 
-  def initialize (pos, board, player, moved = false)
-    @pos, @board, @moved, @player =  pos, board, moved, player
+  def initialize (pos, board, player)
+    @pos, @board, @player =  pos, board, player
+    @moved = false
     @color = @player.color
   end
 
@@ -52,7 +53,7 @@ end
 class SteppingPiece < Piece
   attr_reader :color
 
-  def initialize(pos, board, player, moved = false)
+  def initialize(pos, board, player)
     super
     create_directions
   end
@@ -83,7 +84,7 @@ end
 
 #Sliding pieces
 class Rook < SlidingPiece
-    def initialize(pos, board, player, moved = false)
+    def initialize(pos, board, player)
     super
     @symbol = "\u265C"
   end
@@ -94,7 +95,7 @@ class Rook < SlidingPiece
 end
 
 class Bishop < SlidingPiece
-  def initialize(pos, board, player, moved = false)
+  def initialize(pos, board, player)
     super
     @symbol = "\u265D"
   end
@@ -105,7 +106,7 @@ class Bishop < SlidingPiece
 end
 
 class Queen < SlidingPiece
-  def initialize(pos, board, player, moved = false)
+  def initialize(pos, board, player)
     super
     @symbol = "\u265B"
   end
@@ -120,7 +121,7 @@ end
 #Stepping pieces
 class King < SteppingPiece
 
-  def initialize(pos, board, player, moved = false)
+  def initialize(pos, board, player)
     super
     @symbol = "\u265A"
   end
@@ -137,7 +138,7 @@ end
 class Pawn < SteppingPiece
   attr_reader :direction, :color
 
-  def initialize(pos, board, player, moved = false)
+  def initialize(pos, board, player)
     super
     @symbol = "\u265F"
   end
@@ -147,10 +148,10 @@ class Pawn < SteppingPiece
   end
 
   def possible_moves
-    pawn_moves_helper(pos, direction, color, moved)
+    pawn_moves_helper(pos, direction, color)
   end
 
-  def pawn_moves_helper(pos, direction, color, moved)
+  def pawn_moves_helper(pos, direction, color)
     results = []
     new_pos = [pos[0] + direction, pos[1]]
     results << new_pos if @board.on_board?(new_pos) && !@board.occupied?(new_pos)
@@ -175,7 +176,7 @@ class Pawn < SteppingPiece
 end
 
 class Knight < SteppingPiece
-  def initialize(pos, board, player, moved = false)
+  def initialize(pos, board, player)
     super
     @symbol = "\u265E"
   end
