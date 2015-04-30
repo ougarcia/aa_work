@@ -1,22 +1,35 @@
 class Piece
   attr_reader :symbol, :pos, :color
-  attr_accessor :moved, :pos, :board
+  attr_accessor :moved, :pos
 
-  def initialize (pos, board, player)
-    @pos, @board, @player =  pos, board, player
+  def initialize (pos, board, color, side)
+    @pos, @board, @color, @side =  pos, board, color, side
     @moved = false
-    @color = @player.color
   end
 
   def move_into_check?(new_pos)
-    new_board = Board.deep_dup(board)
+    new_board = Board.deep_dup(@board)
     new_board.move!(pos, new_pos)
     new_board.in_check?(color)
   end
 
   def dup(new_board)
-    self.class.new(pos.dup, new_board, @player)
+    self.class.new(pos.dup, new_board, @color, @side)
   end
+
+  def movement_helper(pos, offset, color)
+    new_pos = [pos[0] + offset[0], pos[1] + offset[1]]
+    if !@board.on_board?(new_pos)
+      return []
+    elsif !@board.occupied?(new_pos)
+      [new_pos] + (self.sliding? ? movement_helper(new_pos, offset, color) : [])
+    elsif @board[new_pos].color != color
+      return [new_pos]
+    else
+      return []
+    end
+  end
+
 end
 
 class SlidingPiece < Piece
@@ -30,30 +43,22 @@ class SlidingPiece < Piece
       offsets = [ [1, 0], [-1, 0], [0, 1], [0, -1] ]
     end
     offsets.each do |offset|
-      possible_moves += sliding_moves_helper(pos, offset, color)
+      possible_moves += movement_helper(pos, offset, color)
     end
 
     possible_moves
   end
 
-  def sliding_moves_helper(pos, offset, color)
-    new_pos = [pos[0] + offset[0], pos[1] + offset[1]]
-    if !@board.on_board?(new_pos)
-      return []
-    elsif !@board.occupied?(new_pos)
-      return [new_pos] + sliding_moves_helper(new_pos, offset, color)
-    elsif @board[new_pos].color != color
-      return [new_pos]
-    else
-      return []
-    end
+
+  def sliding?
+    true
   end
 end
 
 class SteppingPiece < Piece
   attr_reader :color
 
-  def initialize(pos, board, player)
+  def initialize(pos, board, color, side)
     super
     create_directions
   end
@@ -61,30 +66,21 @@ class SteppingPiece < Piece
   def possible_moves
     possible_moves = []
     @possible_directions.each do |offset|
-      possible_moves += stepping_moves_helper(pos, offset, color)
+      possible_moves += movement_helper(pos, offset, color)
     end
 
     possible_moves
   end
 
-  def stepping_moves_helper(pos, offset, color)
-    new_pos = [pos[0]+offset[0], pos[1]+offset[1]]
-    if !@board.on_board?(new_pos)
-      return []
-    elsif !@board.occupied?(new_pos)
-      return [new_pos]
-    elsif @board[new_pos].color != color
-      return [new_pos]
-    else
-      return []
-    end
+  def sliding?
+    false
   end
 end
 
 
 #Sliding pieces
 class Rook < SlidingPiece
-    def initialize(pos, board, player)
+    def initialize(pos, board, color, side)
     super
     @symbol = "\u265C"
   end
@@ -95,7 +91,7 @@ class Rook < SlidingPiece
 end
 
 class Bishop < SlidingPiece
-  def initialize(pos, board, player)
+  def initialize(pos, board, color, side)
     super
     @symbol = "\u265D"
   end
@@ -103,10 +99,11 @@ class Bishop < SlidingPiece
   def possible_moves
     super(@pos, :diag)
   end
+
 end
 
 class Queen < SlidingPiece
-  def initialize(pos, board, player)
+  def initialize(pos, board, color, side)
     super
     @symbol = "\u265B"
   end
@@ -121,7 +118,7 @@ end
 #Stepping pieces
 class King < SteppingPiece
 
-  def initialize(pos, board, player)
+  def initialize(pos, board, color, side)
     super
     @symbol = "\u265A"
   end
@@ -138,13 +135,13 @@ end
 class Pawn < SteppingPiece
   attr_reader :direction, :color
 
-  def initialize(pos, board, player)
+  def initialize(pos, board, color, side)
     super
     @symbol = "\u265F"
   end
 
   def create_directions
-    @direction = (@player.number == 2 ? 1 : -1)
+    @direction = (@side == :top ? 1 : -1)
   end
 
   def possible_moves
@@ -176,7 +173,7 @@ class Pawn < SteppingPiece
 end
 
 class Knight < SteppingPiece
-  def initialize(pos, board, player)
+  def initialize(pos, board, color, side)
     super
     @symbol = "\u265E"
   end

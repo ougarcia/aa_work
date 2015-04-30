@@ -10,41 +10,37 @@ class Game
 
   def initialize
     @board = Board.new
-    @player1, @player2 = Player.new(:red, 1), Player.new(:blue, 2)
-    create_pieces(@player1)
-    create_pieces(@player2)
+    @player1, @player2 = Player.new(:red), Player.new(:blue)
+    create_pieces(:red, :bottom)
+    create_pieces(:blue, :top)
   end
 
-  def create_pieces(player)
-    if player.number == 2
+  def create_pieces(color, side)
+    if side == :top
       back_row, pawn_row = 0, 1
     else
       back_row, pawn_row = 7, 6
     end
-    color = player.color
 
     HIGHER_PIECES.each_with_index do |piece_class, i|
       position = [back_row, i]
-      @board[position] = piece_class.new(position, @board, player)
+      @board[position] = piece_class.new(position, @board, color, side)
     end
 
     #create pawns
     0.upto(7) do |column|
       pos = [pawn_row, column]
-      @board[pos] = Pawn.new(pos, @board, player)
+      @board[pos] = Pawn.new(pos, @board, color, side)
     end
   end
 
-  def show_board
-    @board
-  end
 
   def play
-    current_player, other_player = @player1, @player2
+    current_player = @player1
     until @board.checkmate?(current_player)
       puts "#{current_player.color.capitalize}'s Turn"
       take_turn(current_player)
-      current_player, other_player = other_player, current_player
+      current_player = other_player(current_player)
     end
     puts "#{current_player.color.capitalize} is checkmated!"
   end
@@ -68,6 +64,15 @@ class Game
     if @board.in_check?(@player2.color)
       puts "#{@player2.color.capitalize}'s in Check!!!!"
     end
+  end
+
+  def other_player(player)
+    player == @player1 ? @player2 : @player1
+  end
+
+
+  def show_board
+    @board
   end
 end
 
