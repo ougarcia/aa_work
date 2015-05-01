@@ -22,8 +22,9 @@ class Piece
     @steps = DELTAS.map { |delta| [ delta[0] * direction, delta[1] ] }
   end
 
-  def king?
-    @king
+  def make_king
+    @king = true
+    @steps = DELTAS + DELTAS.map { |delta| [ delta[0] * direction, delta[1] ] }
   end
 
   def move(end_pos)
@@ -77,14 +78,14 @@ class Piece
   end
 
   def perform_slide(end_pos)
-    step_moves = next_steps(@pos)
+    step_moves = one_step(@pos)
     raise InvalidMoveError unless step_moves.include?(end_pos)
     move(end_pos)
   end
 
   def valid_slide?(end_pos)
-    step_moves = next_steps(@pos)
-    step_moves.include?(end_pos)
+    valid_steps = one_step(@pos)
+    valid_steps.include?(end_pos)
   end
 
   def valid?(move)
@@ -112,21 +113,38 @@ class Piece
   end
 
   def valid_jump?(end_pos)
-    [:left, :right].each do |direction|
-      enemy_location = next_steps(@pos, direction)
-      final_position = next_steps(enemy_location, direction)
+    possible_enemies = one_step(@pos)
+    possible_landings = two_steps(@pos)# looks like there's something wrong with two_steps
+    p possible_landings
+    possible_enemies.each_index do |i|
+      possible_enemy = possible_enemies[i] 
+      possible_landing  = possible_landings[i]
       booleans = []
-      booleans << (@board[enemy_location].side == @opposite_side)
-      booleans << (@board[final_position].side == nil)
-      booleans << (end_pos == final_position)
+      booleans << (@board[possible_enemy].side == @opposite_side)
+      booleans << (@board[possible_landing].side == nil)
+      booleans << (end_pos == possible_landing)
       return true if booleans.all?
     end
+
+
+
+    # [:left, :right].each do |direction|
+    #   enemy_location = next_steps(@pos, direction)
+    #   final_position = next_steps(enemy_location, direction)
+    #   booleans = []
+    #   booleans << (@board[enemy_location].side == @opposite_side)
+    #   booleans << (@board[final_position].side == nil)
+    #   booleans << (end_pos == final_position)
+    #   return true if booleans.all?
+    # end
 
     false
   end
 
 
   def next_steps(pos, direction = :both)
+
+    #rewrite, probably won't use left and right
     case direction
     when :both
       [next_steps(pos, :left), next_steps(pos, :right)]
@@ -135,6 +153,23 @@ class Piece
     when :right
       Piece.sum_arrays(@steps[1], pos)
     end
+  end
+
+  def one_step(pos)
+    result = []
+    @steps.each do |step|
+      result << Piece.sum_arrays(step, pos)
+    end
+
+    result
+  end
+
+  def two_steps(pos)
+    result = []
+    @steps.each do |step|
+      result << Piece.sum_arrays(Piece.sum_arrays(step, pos), pos)
+    end
+    result
   end
 
   def self.sum_arrays(arr1, arr2)
@@ -156,8 +191,6 @@ class Piece
     else
       obj
     end
-
-    
   end
 
 end
@@ -174,9 +207,9 @@ class NullPiece
   def dup(new_board)
     NullPiece.new
   end
+
 end
 
 
 if __FILE__ == $PROGRAM_NAME
-
 end

@@ -81,6 +81,6 @@ if __FILE__ == $PROGRAM_NAME
   piece = board[[2, 3]]
   board[[3, 2]] = Piece.new(board, [3, 2], :bottom)
   board[[6, 3]] = NullPiece.new
-  piece.perform_moves( [ [4, 1], [6, 3] ] )
   board.render
+  p piece.valid_jump?( [4, 1] )
 end
