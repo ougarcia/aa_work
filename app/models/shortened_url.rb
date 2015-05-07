@@ -1,6 +1,8 @@
 class ShortenedUrl < ActiveRecord::Base
-  validates :long_url, :presence => true
+  validates :long_url, :presence => true, :length => { maximum: 1024 }
   validates :submitter, presence: true
+  validate user_over_submission
+
   # validates :short_url, presence: true, uniqueness: true
 
   belongs_to(
@@ -17,7 +19,15 @@ class ShortenedUrl < ActiveRecord::Base
     :primary_key => :id
   )
 
+  has_many(
+    :taggings,
+    class_name: 'Tagging',
+    foreign_key: :url_id,
+    primary_key: :id
+  )
+
   has_many(:visitors, -> { distinct }, through: :visits, source: :visitor)
+  has_many :topics, -> { distinct }, through: :taggings, source: :topic
 
   def self.random_code
     code = ""
@@ -53,5 +63,12 @@ class ShortenedUrl < ActiveRecord::Base
     self.visitors.where(created_at: (10.minutes.ago)..Time.now).count
     # Visit.where("shortened_url_id = ? AND
     # created_at > ?", self.id, 9.minutes.ago).select(:user_id).distinct.count
+  end
+
+  def user_over_submission
+    params = { created_at: (5.minutes.ago)..Time.now, user_id: user_id }
+    if self.visitors.where(params).count > 5
+      errors[:over_submission] << "you are doing too much"
+    end
   end
 end
