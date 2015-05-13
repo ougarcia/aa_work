@@ -1,0 +1,22 @@
+<table>
+  <tr>
+    <% @cat.attributes.each do |attribute, value| %>
+      <th> <%= attribute %> </th>
+    <% end %>
+  </tr>
+
+  <tr>
+    <% @cat.attributes.each do |attribute, value| %>
+      <td> <%=  value %> </td>
+    <% end %>
+  </tr>
+</table>
+<% @cat.cat_rental_requests.order("start_date").each do |rental| %>
+<% next if rental.status == "DENIED" %>
+  <p>
+    <%= [rental.start_date, rental.end_date] %>
+    <%= button_to 'approve', approve_cat_rental_request_url(rental), method: :patch %>
+    <%= button_to 'deny', deny_cat_rental_request_url(rental), method: :patch %>
+  </p>
+  <br>
+<% end %>
