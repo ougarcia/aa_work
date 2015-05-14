@@ -8,15 +8,15 @@
 #  session_token   :string(255)      not null
 #  created_at      :datetime
 #  updated_at      :datetime
-#
 
 class User < ActiveRecord::Base
   validates :username, :password_digest, presence: true
-  validates :username, :session_token, uniqueness: true
-  after_initialize :set_session_token
+  validates :username, uniqueness: true
+  after_save :set_session_token
   attr_reader :password
   has_many :cats
   has_many :cat_rental_requests
+  has_many :sessions
 
   def self.find_by_credentials(arguments)
     user = User.find_by(username: arguments[:username])
@@ -24,7 +24,8 @@ class User < ActiveRecord::Base
   end
 
   def set_session_token
-    self.session_token ||= SecureRandom.urlsafe_base64
+    new_token = SecureRandom.urlsafe_base64
+    Session.create!(user_id: self.id, session_token: new_token)
   end
 
   def reset_session_token!
