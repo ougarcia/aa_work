@@ -14,6 +14,14 @@
   <% end %>
 </p>
 
+<% if flash[:messages] %>
+  <% flash[:messages].each do |msg| %>
+    <ul>
+      <li><%= msg %></li>
+    </ul>
+  <% end %>
+<% end %>
+
 <%= yield %>
 
 </body>
