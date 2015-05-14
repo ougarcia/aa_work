@@ -1,2 +1,13 @@
 <h1><%= @band.name %></h1>
 <%= link_to "Edit band", edit_band_url(@band) %>
+
+<% unless @band.albums.empty? %>
+  <h3>Albums</h3>
+  <ul>
+    <% @band.albums.each do |album| %>
+      <li><%= link_to album.title, album_url(album) %></li>
+    <% end %>
+  </ul>
+<% end %>
+<br>
+<%= link_to "Add Album", new_band_album_url(@band) %>

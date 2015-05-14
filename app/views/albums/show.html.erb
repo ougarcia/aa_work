@@ -1,0 +1,13 @@
+<h1><%= @album.title %></h1>
+
+<% unless @album.tracks.empty? %>
+  <h3>Tracks</h3>
+  <ul>
+    <% @album.tracks.each do |track| %>
+      <li><%= track.title %></li>
+    <% end %>
+  </ul>
+<% end %>
+
+<br>
+<%= link_to "Edit", edit_album_url(@album) %>
