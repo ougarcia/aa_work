@@ -79,8 +79,8 @@ Watch the Sunday gang in Harajuku
 There's something wrong with me, I'm a cuckoo
 "
 
-User.create!(email: "oscar@example.com", password: "oscar" )
-User.create!(email: "bob@example.com", password: "oscar" )
+User.create!(email: "oscar@example.com", password: "oscaroscaroscar" )
+User.create!(email: "bob@example.com", password: "bobbobbob" )
 
 Band.create!(name: "The xx")
 Band.create!(name: "M83")

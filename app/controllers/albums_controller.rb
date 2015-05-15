@@ -19,7 +19,7 @@ class AlbumsController < ApplicationController
   end
 
   def show
-    @album = Album.find(params[:id])
+    @album = Album.includes(:tracks).find(params[:id])
   end
 
   def edit
