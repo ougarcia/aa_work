@@ -1,10 +1,8 @@
 class UsersController < ApplicationController
+  before_action :require_logout, except: :show
+
   def new
-    if logged_in?
-      redirect_to user_url(current_user)
-    else
-      @user = User.new
-    end
+    @user = User.new
   end
 
   def create
@@ -21,6 +19,8 @@ class UsersController < ApplicationController
   def show
     @user = User.find(params[:id])
   end
+
+  private
 
   def user_params
     params.require(:user).permit(:email, :password)

@@ -5,10 +5,15 @@ class User < ActiveRecord::Base
   validates :email, :session_token, uniqueness: true
   after_initialize :ensure_session_token
   validates :password, length: { minimum: 6, allow_nil: true }
-  has_many :notes
+  has_many :notes, dependent: :destroy
 
   def self.generate_session_token
-    SecureRandom.urlsafe_base64
+    token = SecureRandom.urlsafe_base64
+    if User.exists?(session_token: token)
+      User.generate_session_token
+    else
+      token
+    end
   end
 
   def self.find_by_credentials(email, password)

@@ -27,4 +27,11 @@ class ApplicationController < ActionController::Base
     end
   end
 
+  def require_logout
+    if logged_in?
+      flash[:messages] = ["You're already logged in!"]
+      redirect_to bands_url
+    end
+  end
+
 end
