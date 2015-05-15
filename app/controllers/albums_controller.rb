@@ -1,4 +1,5 @@
 class AlbumsController < ApplicationController
+  before_action :make_sure_user_is_logged_in
 
   def new
     @album = Album.new

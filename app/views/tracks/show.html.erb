@@ -1,0 +1,16 @@
+<h1><%= @track.title %></h1>
+<p>
+Band: <%= @track.band.name %><br>
+Album: <%= @track.album.title %>
+</p>
+
+<h3>lyrics</h3>
+<pre>
+<%= ugly_lyrics(@track.lyrics) %>
+</pre>
+<br>
+<%= link_to "edit track", edit_track_url(@track) %>
+<br>
+<%= render 'notes/form' %>
+<br>
+<%= render 'notes/note' %>

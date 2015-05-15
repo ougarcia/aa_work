@@ -1,0 +1,9 @@
+<form action=<%= track_notes_url(@track) %> method="post">
+  <input type="hidden" name="authenticity_token" value="<%= form_authenticity_token %>">
+
+  <label>New Note
+    <textarea  name="note[note_text]" rows="25"><%= @note.note_text %></textarea>
+  </label>
+  <br>
+  <input type="submit" value="submit">
+</form>

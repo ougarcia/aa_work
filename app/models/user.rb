@@ -2,6 +2,7 @@ class User < ActiveRecord::Base
   validates :email, :password_digest, :session_token, presence: true
   validates :email, :session_token, uniqueness: true
   after_initialize :ensure_session_token
+  has_many :notes
 
   def self.generate_session_token
     SecureRandom.urlsafe_base64
@@ -15,6 +16,8 @@ class User < ActiveRecord::Base
 
   def reset_session_token!
     self.session_token = User.generate_session_token
+    self.save!
+    self.session_token
   end
   def password=(password)
     @password = password
@@ -24,7 +27,7 @@ class User < ActiveRecord::Base
   def is_password?(password)
     BCrypt::Password.new(password_digest).is_password?(password)
   end
-    
+
   private
 
   def ensure_session_token
