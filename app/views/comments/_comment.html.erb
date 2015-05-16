@@ -1,0 +1,11 @@
+<table>
+  <tr><th><h5><%= comment.author.email %></h5><td><%= comment.content %></td></tr>
+  <tr><td><small>posted <%= time_ago_in_words(comment.created_at) %> ago</small></td></tr>
+</table>
+
+
+ <%= render 'comments/form', http_dest: comments_url, http_method: :post, comment: Comment.new, commentable: comment, submit_text: "Submit" %>
+
+<% comments[comment.id].each do |child_comment| %>
+  <ul><%= render 'comments/comment', comment: child_comment, comments: comments %></ul>
+<% end %>

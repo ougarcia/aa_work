@@ -1,0 +1,14 @@
+<form action="<%= http_dest %>" method="post">
+  <input type="hidden" name="_method" value="<%= http_method %>">
+  <input type="hidden" name="authenticity_token" value="<%= form_authenticity_token %>">
+
+  <label>E-mail
+    <input type="text" name="user[email]" value="<%= user.email %>">
+  </label>
+
+  <label>Password
+    <input type="password" name="user[password]">
+  </label>
+
+  <input type="submit" value="<%= submit_text %>">
+</form>

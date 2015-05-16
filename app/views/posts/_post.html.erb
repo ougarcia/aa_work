@@ -1,0 +1,10 @@
+<% if post.url %>
+  <h4><a href="<%= post.url.html_safe %>"> <%= post.title %></a></h4>
+<% else %>
+  <h4> <%= post.title %></h4>
+<% end %>
+<%= post.author.email %>
+<pre>
+  <%= post.content %>
+</pre>
+<%= link_to "Edit", edit_post_url(post) %>

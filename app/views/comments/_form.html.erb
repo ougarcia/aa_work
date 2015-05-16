@@ -1,0 +1,13 @@
+<form action="<%= http_dest %>" method="post">
+  <input type="hidden" name="_method" value="<%= http_method %>">
+  <input type="hidden" name="authenticity_token" value="<%= form_authenticity_token %>">
+  <input type="hidden" name="comment[commentable_id]" value="<%= commentable.id %>">
+  <input type="hidden" name="comment[commentable_type]" value="<%= commentable.class.name %>">
+  <input type="hidden" name="comment[parent_post_id]" value="<%= commentable.is_a?(Post) ? commentable.id : commentable.parent_post_id %>">
+
+  <label>Comment (like Twitter!)
+    <input type="text" name="comment[content]" value="<%= comment.content %>">
+  </label>
+
+  <input type="submit" value="<%= submit_text %>">
+</form>

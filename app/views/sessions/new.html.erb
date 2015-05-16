@@ -1,0 +1,7 @@
+<h1>Log in</h1>
+
+<%= render 'shared/user_form',
+    user: @user,
+    http_dest: session_url,
+    http_method: "post",
+    submit_text: "Log in" %>
