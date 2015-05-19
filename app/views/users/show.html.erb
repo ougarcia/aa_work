@@ -1,0 +1,4 @@
+<% @user.goals.each do |goal| %>
+  <%= goal.objective %>
+<% end %>
+<%= link_to "New Goal", new_goal_url %>

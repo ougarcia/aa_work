@@ -8,6 +8,16 @@
 </head>
 <body>
 
+
+<%= flash[:errors] %>
+<% if current_user %>
+  <%= current_user.username %>
+  <%= button_to "Log Out", session_url, method: :delete %>
+<% elsif !current_page?(new_user_url) && !current_page?(new_session_url) %>
+    <%= link_to "Log In", new_session_url %>
+    <%= button_to "Sign Up", new_user_url, method: :get %>
+<% end %>
+
 <%= yield %>
 
 </body>

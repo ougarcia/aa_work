@@ -1,5 +1,6 @@
 guard :rspec, cmd: 'spring rspec' do
-  watch(%r{^app/}) { "spec" }
-  watch(%r{^spec/}) { "spec" }
-  watch('config/routes.rb') { "spec" }
+  x = "spec/features/goal_spec.rb"
+  watch(%r{^app/}) { x }
+  watch(%r{^spec/}) { x }
+  watch('config/routes.rb') { x }
 end

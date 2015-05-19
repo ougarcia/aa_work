@@ -1,0 +1,18 @@
+<%= render @goal %>
+
+<form action="<%= goal_url(@goal) %>" method="post">
+  <input type="hidden" name="_method" value="patch">
+  <input type="hidden" name="authenticity_token" value="<%= form_authenticity_token %>">
+
+  <label>Make Public
+    <input type="radio" name="goal[publicized]" checked value="<%= true %>">
+  </label>
+  <label>Make Private
+    <input type="radio" name="goal[publicized]" value="<%= false %>">
+  </label>
+
+  <input type="submit" value="Update Privacy">
+
+</form>
+
+<%= button_to "Mark Completed", goal_url(@goal, 'goal[completed]' => true), method: :patch %>
