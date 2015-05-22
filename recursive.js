@@ -70,7 +70,7 @@ var binarySearch = function(arr, target) {
 
 // console.log(binarySearch([1,2,3,4,5,7,8,9], 5))
 
-var makeChange= function(change, coins){
+var makeChange = function(change, coins){
   while (change < coins[0]) { coins = coins.slice(1); }
   var minSolution = [];
   var hasSolution = false;
@@ -90,6 +90,48 @@ var makeChange= function(change, coins){
   }
   return minSolution;
 };
+
+
+var makeBetterChange = function (change, coins) {
+  var previousAnswers = {};
+  return function getChange(change, coins){
+    if (previousAnswers[change] !== undefined) {
+      return previousAnswers[change];
+    }
+    while (change < coins[0]) { coins = coins.slice(1); }
+    var minSolution = [];
+    var hasSolution = false;
+    if (change > 0) {
+      var solution = [];
+      var i = 0;
+      while (i < coins.length){
+        solution = [coins[i]].concat( getChange(change - coins[i], coins) );
+        if (hasSolution === false) {
+          minSolution = solution;
+          hasSolution = true;
+        } else if (solution.length < minSolution.length) {
+          minSolution = solution;
+        }
+        i++;
+      }
+    }
+    previousAnswers[change] = minSolution;
+    return minSolution;
+  };
+};
+
+var newMakeChange = makeBetterChange();
+console.log(newMakeChange(48, [25, 24, 5, 1]));
+
+
+
+
+
+
+
+
+
+
 
 var merge = function(arr1, arr2) {
   // takes in two sorted arrays and merges them
