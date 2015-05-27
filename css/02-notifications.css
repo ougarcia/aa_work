@@ -20,14 +20,20 @@
   background: #fff;
   color: #000;
   border: 1px solid #ccc;
-  border-top: 0px;
+  border-bottom: 0px;
 
+}
+
+.dropdown > li:last-child {
+  border-bottom-left-radius: 5px;
+  border-bottom-right-radius: 5px;
+  border-bottom: 1px;
 }
 
 .notifications:hover .dropdown {
   display: inline;
   position: absolute;
-  top: 40px
+  top: 36px
 }
 
 .dropdown a {
