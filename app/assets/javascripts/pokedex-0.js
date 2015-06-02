@@ -2,17 +2,41 @@ window.Pokedex = (window.Pokedex || {});
 window.Pokedex.Models = {};
 window.Pokedex.Collections = {};
 
-Pokedex.Models.Pokemon = null; // WRITE ME
+window.Pokedex.Models.Pokemon = Backbone.Model.extend({
+  urlRoot: '/pokemon',
+  toys: function() {
+    this._toys = this._toys || new window.Pokedex.Collections.PokemonToys([], { pokemon: this });
+    return this._toys;
+  },
 
-Pokedex.Models.Toy = null; // WRITE ME IN PHASE 2
+  parse: function(resp, options) {
 
-Pokedex.Collections.Pokemon = null; // WRITE ME
+    if (resp.toys) {
+      this.toys().set(resp.toys);
+      delete resp.toys;
+    }
+    return resp;
+  }
 
-Pokedex.Collections.PokemonToys = null; // WRITE ME IN PHASE 2
+});
+
+window.Pokedex.Models.Toy = Backbone.Model.extend({
+
+});
+
+window.Pokedex.Collections.Pokemon = Backbone.Collection.extend({
+  model: window.Pokedex.Models.Pokemon,
+  url: '/pokemon'
+
+});
+
+window.Pokedex.Collections.PokemonToys = Backbone.Collection.extend({
+  model: window.Pokedex.Models.Toy
+});
 
 window.Pokedex.Test = {
   testShow: function (id) {
-    var pokemon = new Pokedex.Models.Pokemon({ id: id });
+    var pokemon = new window.Pokedex.Models.Pokemon({ id: id });
     pokemon.fetch({
       success: function () {
         console.log(pokemon.toJSON());
@@ -21,7 +45,7 @@ window.Pokedex.Test = {
   },
 
   testIndex: function () {
-    var pokemon = new Pokedex.Collections.Pokemon();
+    var pokemon = new window.Pokedex.Collections.Pokemon();
     pokemon.fetch({
       success: function () {
         console.log(pokemon.toJSON());
@@ -32,17 +56,20 @@ window.Pokedex.Test = {
 
 window.Pokedex.RootView = function ($el) {
   this.$el = $el;
-  this.pokes = new Pokedex.Collections.Pokemon();
+  this.pokes = new window.Pokedex.Collections.Pokemon();
   this.$pokeList = this.$el.find('.pokemon-list');
   this.$pokeDetail = this.$el.find('.pokemon-detail');
   this.$newPoke = this.$el.find('.new-pokemon');
   this.$toyDetail = this.$el.find('.toy-detail');
+  this.refreshPokemon();
 
-  // Click handlers go here.
+  this.$pokeList.on('click', 'li', this.selectPokemonFromList.bind(this));
+  this.$newPoke.on('submit', this.submitPokemonForm.bind(this));
+
 };
 
 $(function() {
   var $rootEl = $('#pokedex');
-	window.Pokedex.rootView = new Pokedex.RootView($rootEl);
+	window.Pokedex.rootView = new window.Pokedex.RootView($rootEl);
   window.Pokedex.rootView.refreshPokemon();
 });
