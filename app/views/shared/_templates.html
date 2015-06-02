@@ -2,6 +2,19 @@
 </script>
 
 <script type="text/template" id="pokemon-detail-template">
+  <div class="detail">
+    <img src="<%%= pokemon.escape('image_url') %>">
+    <br>
+    <ul>
+      <%% for (var attr in pokemon.attributes) { %>
+        <li>
+          <span style="font-weight:bold;"><%%= attr %>:</span>
+          <%%= pokemon.get(attr) %>
+        </li>
+      <%% } %>
+    </ul>
+  </div>
+
 </script>
 
 <script type="text/template" id="toy-list-item-template">
