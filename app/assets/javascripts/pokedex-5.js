@@ -20,12 +20,14 @@ Pokedex.Views.PokemonIndex = Backbone.View.extend({
     this.$el.append(content);
   },
 
-  refreshPokemon: function (options) {
-    this.collection.fetch();
+  refreshPokemon: function (callback, options) {
+
+    this.collection.fetch({
+      success: callback
+    });
   },
 
   render: function () {
-    console.log("thisthinghere");
     this.$el.empty();
     var that = this;
     this.collection.each( function(pokemon) {
@@ -35,11 +37,7 @@ Pokedex.Views.PokemonIndex = Backbone.View.extend({
 
   selectPokemonFromList: function (event) {
     var poke = this.collection.get($(event.currentTarget).data('id'))
-    var $pokeDetailView = new Pokedex.Views.PokemonDetail({
-      model: poke
-    });
-    $("#pokedex .pokemon-detail").html($pokeDetailView.$el);
-    $pokeDetailView.refreshPokemon();
+    Backbone.history.navigate('/pokemon/' + poke.id, { trigger: true });
   }
 });
 
@@ -48,33 +46,37 @@ Pokedex.Views.PokemonDetail = Backbone.View.extend({
     "click .toy-list-item": "selectToyFromList"
   },
 
-  refreshPokemon: function (options) {
+  refreshPokemon: function (callback, options) {
     var that = this;
     this.model.fetch( {
-      success: that.render.bind(this)
+      success: that.render.bind(this, callback)
     });
+
+    return this;
   },
 
-  render: function () {
+  render: function (callback) {
 
     var content = JST['pokemonDetail']({pokemon: this.model});
     var $ul = $('<ul>');
     this.model.toys().each( function(toy) {
       var x = JST['toyListItem']({toy: toy});
-      console.log("hey");
       $ul.append(x);
     });
     this.$el.html(content);
     this.$el.append($ul);
+    callback();
   },
 
   selectToyFromList: function (event) {
-    var ourModel = this.model.toys().get($(event.currentTarget).data('id'));
-    var toyView = new window.Pokedex.Views.ToyDetail({
-      model: ourModel
-    });
-    $('#pokedex .toy-detail').html(toyView.$el);
-    toyView.render();
+    var $target = $(event.currentTarget);
+    Backbone.history.navigate(
+      'pokemon/' +
+      $target.data('pokemon-id') +
+      '/toys/' + $target.data('id'),
+      {trigger: true}
+    );
+
   }
 });
 
@@ -82,16 +84,4 @@ window.Pokedex.Views.ToyDetail = Backbone.View.extend({
   render: function () {
     this.$el.append(JST['toyDetail']({pokes: [], toy: this.model}));
   }
-});
-
-
-$(function () {
-  var pokemons = new window.Pokedex.Collections.Pokemon();
-  pokemons.fetch();
-  var pokemonIndex = new window.Pokedex.Views.PokemonIndex({
-    collection: pokemons
-  });
-  // pokemonIndex.collection.fetch();
-  // pokemonIndex.refreshPokemon();
-  $("#pokedex .pokemon-list").html(pokemonIndex.$el);
 });
