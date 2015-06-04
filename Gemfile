@@ -26,3 +26,12 @@ gem 'bcrypt-ruby', '~> 3.0.0', require: "bcrypt"
 group :development, :test do
   gem 'rspec-rails'
 end
+
+
+group :development do
+  gem 'faker'
+  gem 'annotate'
+  gem 'bullet'
+  gem 'pry-rails'
+  gem 'quiet_assets'
+end
