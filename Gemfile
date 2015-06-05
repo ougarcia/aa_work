@@ -11,7 +11,7 @@ gem 'jbuilder', '~> 1.2'
 gem 'simple-rss'
 gem 'backbone-on-rails'
 gem 'ejs'
-gem 'boostrap'
+
 
 group :doc do
   gem 'sdoc', require: false

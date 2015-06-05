@@ -22,7 +22,7 @@ NewsReader.Views.FeedsIndex = Backbone.CompositeView.extend({
 
   removeFeedView: function(feed) {
     this.removeModelSubview('ul.feeds', feed);
-  },
+  }
 
 
 });
