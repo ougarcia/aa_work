@@ -7,8 +7,8 @@ TrelloClone.Views.BoardItem = Backbone.View.extend({
   },
 
   render: function () {
-    var content = this.model.get('title');
-    this.$el.text(content);
+    var content = this.template({ board: this.model });
+    this.$el.html(content);
     return this;
   }
 });

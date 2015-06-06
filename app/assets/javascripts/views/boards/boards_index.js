@@ -13,7 +13,6 @@ window.TrelloClone.Views.BoardsIndex = Backbone.CompositeView.extend({
 
   render: function () {
     var content = this.template();
-    console.log(content);
     this.$el.html(content);
     this.attachSubviews();
     return this;
