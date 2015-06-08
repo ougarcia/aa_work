@@ -4,17 +4,17 @@ window.TrelloClone.Collections.Boards = Backbone.Collection.extend({
 
 
   getOrFetch: function (id) {
-  var that = this;
-  var board;
-  if (!(board = this.get(id))) {
-    board = new TrelloClone.Models.Board({ id: id });
-    board.fetch({
-      success: function () { that.add(board); }
-    });
-  } else {
-    board.fetch();
-  }
+    var that = this;
+    var board;
+    if (!(board = this.get(id))) {
+      board = new TrelloClone.Models.Board({ id: id });
+      board.fetch({
+        success: function () { that.add(board, { merge: true}); }
+      });
+    } else {
+      board.fetch();
+    }
 
-  return board;
+    return board;
   }
 });

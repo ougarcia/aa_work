@@ -7,9 +7,7 @@ TrelloClone.Views.NewList = Backbone.View.extend({
   
   initialize: function(options) {
     this.board = options.board;
-    this.boardView = options.boardView;
-    this.collection = options.collection;
-    debugger;
+    this.lists = options.lists;
   },
   
   render: function () {
@@ -27,13 +25,10 @@ TrelloClone.Views.NewList = Backbone.View.extend({
     var newList = new TrelloClone.Models.List();
     newList.save($target.list, {
       success: function () {
-        console.log('successfully added list');
-        that.board.collection.add(newList, {trigger: true} );
-        that.board.fetch(); // for sme reason add doesn't trigger the add listener
+        that.lists.add(newList);
       }
     });
-    // remove self from DOM
-    // maybe do other stuff
-  }
 
+    this.render();
+  }
 });
