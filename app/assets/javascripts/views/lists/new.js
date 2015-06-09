@@ -1,4 +1,5 @@
 TrelloClone.Views.NewList = Backbone.View.extend({
+  className: "col-md-3",
   template: JST['lists/new'],
 
   events: {

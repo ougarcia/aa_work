@@ -9,9 +9,9 @@ l1 = b1.lists.create(title: 'todo')
 l2 = b1.lists.create(title: 'doing')
 l3 = b1.lists.create(title: 'done')
 
-l1 = b2.lists.create(title: 'todo', ord: 1.0)
+l1 = b2.lists.create(title: 'todo', ord: 3.0)
 l2 = b2.lists.create(title: 'doing', ord: 2.0)
-l3 = b2.lists.create(title: 'done', ord: 0.0)
+l3 = b2.lists.create(title: 'done', ord: 1.0)
 
 
 c1 = l3.cards.create(title: 'squats', description: 'feel the burn')
