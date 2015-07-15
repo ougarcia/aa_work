@@ -1,0 +1,37 @@
+require 'launchy'
+
+class Cli
+
+  def prompt_email
+    puts "Input Your email"
+    email = gets.chomp
+    @user = User.find_by_email(email)
+  end
+
+  def offer_options
+    puts "What Do you want to do???"
+    puts "0. Create shortened URL"
+    puts "1. Visit shortened URL"
+    response = gets.chomp.to_i
+  end
+
+
+  def run
+    prompt_email
+    if offer_options == 0
+      # create shortened url
+      puts "Type in your long url"
+      long_url = gets.chomp
+      @short_url = ShortenedUrl.create_for_user_and_long_url!(@user, long_url)
+      print "Short url is: #{@short_url.short_url}\n"
+    else
+      #visit shortened url
+      puts "Type in your shortened url"
+      short_url = ShortenedUrl.find_by_short_url(gets.chomp)
+      Visit.record_visit!(@user, short_url)
+      Launchy.open(short_url.long_url)
+    end
+  end
+end
+
+Cli.new.run
