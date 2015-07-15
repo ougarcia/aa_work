@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>MusicApp</title>
+  <%= csrf_meta_tags %>
+</head>
+<body>
+<p>
+  <% if logged_in? %>
+    <%= current_user.email %><br>
+    <%= link_to "Bands", bands_url %>
+    <%= button_to "log out", session_url, method: :delete %>
+  <% else %>
+    <%= link_to "log in", new_session_url %>
+  <% end %>
+</p>
+
+<% if flash[:messages] %>
+  <% flash[:messages].each do |msg| %>
+    <ul>
+      <li><%= msg %></li>
+    </ul>
+  <% end %>
+<% end %>
+
+<%= yield %>
+
+</body>
+</html>
