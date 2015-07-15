@@ -1,0 +1,16 @@
+.listIndex {
+  background-color: #eee;
+  margin: 10px;
+  border-radius: 10%;
+}
+
+.card {
+  background-color: #fff;
+  margin: 5px;
+  padding: 5px;
+  border: 1px solid #000;
+}
+
+.new-list{
+  display: block;
+}
