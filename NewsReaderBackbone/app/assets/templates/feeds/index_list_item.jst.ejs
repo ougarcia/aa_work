@@ -1,0 +1,12 @@
+<li classs="feed-item group-list-item">
+  <%= feed.escape('title') %>
+  <br>
+  <%= feed.escape('url') %>
+
+  <br>
+  <%= feed.escape('updated_at') %>
+
+  <br>
+  <a href="#feeds/<%= feed.get('id') %>">go to the place</a>
+
+</li>
