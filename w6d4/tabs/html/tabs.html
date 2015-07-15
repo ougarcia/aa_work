@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>My Cool Website</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+    <script src="../js/tabs.js"></script>
+    <link href="../css/tabs.css" rel="stylesheet" type="text/css">
+    <link rel="stylesheet" type="text/css" href="http://yui.yahooapis.com/3.17.2/build/cssreset/cssreset-min.css">
+  </head>
+  <script>
+    $(function() {
+      $('.tabs').tabs();
+    })
+  </script>
+  <body>
+    <ul class='tabs' data-content-tabs='#content-tabs'>
+      <li><a class="active" href='#australian-shepherd'>Australian Shepherd</a></li>
+      <li><a href='#american-pitbull-terrier'>American Pitbull Terrier</a></li>
+      <li><a href='#beagle'>Beagle</a></li>
+    </ul>
+    <div id='content-tabs'>
+      <div class='tab-pane active' id='australian-shepherd'>
+        <p>
+          Originally bred as all-purpose farm dogs,
+          Aussies were left to supervise the children while
+          the parents worked in the fields.
+        </p>
+      </div>
+      <div class='tab-pane' id='american-pitbull-terrier'>
+        <p>
+          They do best when they have a job to do.
+          A bored Amstaff will destroy your house.
+        </p>
+      </div>
+      <div class='tab-pane' id='beagle'>
+        <p>
+          The Beagle is the hardest to train of all dog breeds.
+          He learns new commands slower than all other breeds.
+          You will need to be extra patient when Training him.
+        </p>
+      </div>
+    </div>
+
+  </body>
+</html>
