@@ -1,0 +1,6 @@
+<h1>Edit Post</h1>
+<%= render 'form', http_dest: post_url(@post),
+                    http_method: 'patch',
+                    post: @post,
+                    submit_text: "Save",
+                    sub_id: @post.sub_ids %>

@@ -1,0 +1,7 @@
+<%= render @post %>
+<%= render 'comments/form', http_dest: comments_url, http_method: :post, comment: Comment.new, commentable: @post, submit_text: "Submit" %>
+<ul>
+  <% @all_comments[nil].each do |comment| %>
+    <%= render comment, comments: @all_comments %>
+  <% end %>
+</ul>
